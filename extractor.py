@@ -1,6 +1,8 @@
 import json
-import os
 import logging
+from datetime import datetime
+
+REQUIRED_FIELDS = ["id", "timestamp", "payload"]
 
 
 def extract_json_files(folder_path):
@@ -10,25 +12,33 @@ def extract_json_files(folder_path):
 
         valid, error = _validate_json(data)
         if not valid:
-            logging.error(f"{folder_path} invalid: {error}")
+            logging.error(f"Validation failed: {folder_path} - {error}")
             return None
 
-        logging.info(f"{folder_path} processed successfully")
+        logging.info(f"Processed successfully: {folder_path}")
         return data
 
     except Exception as e:
-        logging.error(f"{folder_path} failed: {str(e)}")
+        logging.error(f"File failed (skipped): {folder_path} - {e}")
         return None
 
 
 def _validate_json(json_data):
     if not isinstance(json_data, dict):
         return False, "root must be an object"
-    if "id" not in json_data or not isinstance(json_data["id"], str):
-        return False, "missing or invalid 'id' (must be string)"
-    if "timestamp" not in json_data or not isinstance(json_data["timestamp"], str):
-        return False, "missing or invalid 'timestamp' (must be string)"
-    if "payload" not in json_data or not isinstance(json_data["payload"], dict):
-        return False, "missing or invalid 'payload' (must be object)"
-        
+    for field in REQUIRED_FIELDS:
+        if field not in json_data:
+            return False, f"Missing field: {field}"
+    if not isinstance(json_data["id"], str):
+        return False, "id must be string"
+    try:
+        ts = json_data["timestamp"]
+        if ts.endswith("Z"):
+            ts = ts[:-1] + "+00:00"
+        datetime.fromisoformat(ts)
+    except (ValueError, TypeError):
+        return False, "timestamp must be ISO-8601 format"
+    if not isinstance(json_data["payload"], dict):
+        return False, "payload must be object"
+
     return True, None

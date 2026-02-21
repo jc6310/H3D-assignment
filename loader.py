@@ -12,12 +12,13 @@ def send_records_to_db(json_data, db_path="test.db"):
     logging.info(f"Record {json_data.get('id', '?')} inserted successfully.")
     return True
 
-def add_records_to_folder(json_data, output_folder):
-    return _write_to_folder(json_data, output_folder)
+def add_records_to_folder(json_data, output_folder, filename=None):
+    """Write record(s) to folder. json_data can be a single dict or list of dicts."""
+    return _write_to_folder(json_data, output_folder, filename)
 
-def _write_to_folder(json_data, output_folder):
+def _write_to_folder(json_data, output_folder, filename=None):
     os.makedirs(output_folder, exist_ok=True)
-    with open(os.path.join(output_folder, "output.json"), "w") as f:
+    name = filename or "output.json"
+    with open(os.path.join(output_folder, name), "w") as f:
         json.dump(json_data, f)
-
     return True

@@ -8,7 +8,7 @@ def load_config():
 
     p.add_argument(
         "--input", 
-        default=os.getenv("INPUT_FOLDER", "test.json")
+        default=os.getenv("INPUT_FOLDER", "./input")
     )
     p.add_argument(
         "--output",
@@ -17,7 +17,7 @@ def load_config():
     p.add_argument(
         "--workers",
         type=int,
-        default=int(os.getenv("WORKER_COUNT", "4"))
+        default=int(os.getenv("WORKER_COUNT", "5"))
     )
     p.add_argument(
         "--mode",

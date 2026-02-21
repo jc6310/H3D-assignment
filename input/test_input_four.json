@@ -1,0 +1,8 @@
+{
+   "id": "123456",
+   "timestamp": "2026-02-25T12:00:00Z",
+   "payload": {
+      "name": "peter jones",
+      "email": "peter.jonas@example.com"
+   }
+ }

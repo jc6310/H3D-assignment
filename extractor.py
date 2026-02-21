@@ -42,3 +42,8 @@ def _validate_json(json_data):
         return False, "payload must be object"
 
     return True, None
+
+
+def validate_json(json_data):
+    """Public validation for testing. Returns (valid, error) tuple."""
+    return _validate_json(json_data)

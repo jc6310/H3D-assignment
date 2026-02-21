@@ -1,5 +1,4 @@
 # H3D-assignment
-H3D assignment
 
 ## Candidate Instructions
 
@@ -35,6 +34,27 @@ Invalid files should:
 - Configurable paths and worker count via env or CLI flag
 - Graceful shutdown (finish processing in-flight files)
 - Unit tests for validation / transformation logic (not required for I/O)
+
+## Requirements Checklist
+
+| Requirement | Status | Implementation |
+|-------------|--------|-----------------|
+| **Language: Python** | Done | Python 3 |
+| **CLI (no UI)** | Done | `python3 app.py` with args |
+| **Input via argument or env** | Done | `--input`, `INPUT_FOLDER` |
+| **Output: SQLite** | Done | `--mode sqlite`, `db.py` |
+| **Output: JSON folder** | Done | `--mode folder`, `loader.add_records_to_folder` |
+| **Schema: id, timestamp, payload** | Done | `extractor._validate_json` |
+| **Timestamp ISO-8601** | Done | `datetime.fromisoformat` (+ Z→+00:00) |
+| **Invalid files don't crash** | Done | try/except, return None |
+| **Invalid files logged** | Done | `logging.error("Validation failed: ...")` |
+| **Multiple workers** | Done | `ThreadPoolExecutor` |
+| **Bounded pool** | Done | `max_workers=config["workers"]` |
+| **Logging with timestamps** | Done | `%(asctime)s [%(levelname)s]` |
+| **Result summaries** | Done | "Success: N, Failed: M" |
+| **Configurable via env/CLI** | Done | `config.py` |
+| **Graceful shutdown** | Done | `handle_shutdown`, SIGINT/SIGTERM |
+| **Unit tests** | Done | `tests/test_json_processor.py` |
 
 ## Run
 

@@ -1,1 +1,1 @@
-# H3D-assignment — stdlib only; Python 3.8+
+# H3D-assignment — Python 3.8+ (stdlib only; watch mode uses polling)

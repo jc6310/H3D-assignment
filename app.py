@@ -3,6 +3,7 @@ import logging
 import os
 import signal
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from config import load_config
@@ -10,6 +11,7 @@ from extractor import extract_json_file
 from loader import send_records_to_db, add_records_to_folder
 
 shutdown_flag = False
+WATCH_POLL_INTERVAL = 2  # seconds
 
 
 def handle_shutdown(signum, frame):
@@ -59,6 +61,38 @@ def process_folder(config):
     return success, failure, records
 
 
+def run_watch_mode(config):
+    """Poll input directory for new .json files and process them."""
+    input_dir = os.path.abspath(config["input"])
+    if config["mode"] == "sqlite":
+        from db import init_db
+        if not init_db(config["db_path"]):
+            logging.error("Database init failed; cannot start watch mode.")
+            return
+    seen = set()
+    folder_records = []
+    logging.info("Watching %s for new .json files (mode=%s). Ctrl+C to stop.", input_dir, config["mode"])
+    while not shutdown_flag:
+        try:
+            files = [
+                os.path.join(input_dir, f)
+                for f in os.listdir(input_dir)
+                if f.endswith(".json")
+            ]
+            for path in files:
+                if path in seen or shutdown_flag:
+                    continue
+                seen.add(path)
+                ok, data = process_file(path, config)
+                if ok and data and config["mode"] == "folder":
+                    folder_records.append(data)
+                    add_records_to_folder(folder_records, config["output"])
+        except OSError as e:
+            logging.warning("Watch poll failed: %s", e)
+        time.sleep(WATCH_POLL_INTERVAL)
+    logging.info("Watch mode stopped.")
+
+
 def main():
     signal.signal(signal.SIGINT, handle_shutdown)
     signal.signal(signal.SIGTERM, handle_shutdown)
@@ -70,6 +104,13 @@ def main():
 
     logging.info("Starting Processing.....")
     if shutdown_flag:
+        return
+
+    if config.get("watch"):
+        if os.path.isdir(config["input"]):
+            run_watch_mode(config)
+        else:
+            logging.error("Watch mode requires --input to be a directory.")
         return
 
     input_path = config["input"]

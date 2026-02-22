@@ -74,6 +74,7 @@ python3 app.py
 | `--workers` | Number of worker threads | `4` |
 | `--mode` | Output mode: `sqlite` or `folder` | `folder` |
 | `--db-path` | SQLite database path (when `--mode sqlite`) | `results.db` |
+| `--watch` | Poll input folder for new .json files | off |
 
 ### Environment variables
 
@@ -84,6 +85,7 @@ python3 app.py
 | `WORKER_COUNT` | `--workers` |
 | `OUTPUT_MODE` | `--mode` |
 | `DB_PATH` | `--db-path` |
+| `WATCH` | `--watch` (set to `1`, `true`, or `yes` to enable) |
 
 ### Example commands
 
@@ -102,6 +104,10 @@ python3 app.py --input ./input --workers 8
 
 # With env vars
 INPUT_FOLDER=./input OUTPUT_MODE=sqlite python3 app.py
+
+# Watch folder for new .json files (run until Ctrl+C)
+python3 app.py --input ./input --mode folder --watch
+python3 app.py --input ./input --mode sqlite --watch
 ```
 
 ## Tests

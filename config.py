@@ -38,6 +38,11 @@ def load_config():
         dest="db_path",
         default=os.getenv("DB_PATH", "results.db"),
     )
+    p.add_argument(
+        "--watch",
+        action="store_true",
+        default=os.getenv("WATCH", "").lower() in ("1", "true", "yes"),
+    )
     args = p.parse_args()
     args.workers = max(1, args.workers)
 

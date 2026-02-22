@@ -2,6 +2,18 @@
 
 ## Candidate Instructions
 
+### Scenario
+You are given a directory containing JSON files. Your task is to build a small service that.
+
+- Watches an input folder for new .json files
+- Validates each file against a simple schema
+- Extracts a subset of fields
+- Writes the transformed output to a database or another output folder
+- Runs multiple workers in parallel
+- Logs processing results and errors
+  
+The goal is not perfection — we want clean code, reasonable architecture, and production-minded thinking.
+
 ### Requirements
 - **Language:** Python / Node / Java (your choice)
 - **CLI or small service** (no UI required)
@@ -11,7 +23,7 @@
   - Write processed JSON into an output folder
 
 ### Validation Rules
-Each input JSON file must contain at minimum:
+Each input JSON file must contain at a minimum:
 
 ```json
 {
@@ -38,6 +50,15 @@ Invalid files should:
 ## Requirements Checklist
 
 All conditions from **Requirements**, **Validation Rules**, **Concurrency**, and **Additional Expectations** above are met.
+
+| Features                                        | Status | 
+|-------------------------------------------------|--------|
+| Watches an input folder for new .json files     | Done   |
+| Validates each file against a simple schema     | Done   |
+| Extracts a subset of fields                     | Done   |
+| Writes the transformed output to a database or another output folder     | Done   |
+| Runs multiple workers in parallel               | Done   |
+| Logs processing results and errors              | Done   |
 
 | Requirement | Status | Implementation |
 |-------------|--------|-----------------|

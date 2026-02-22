@@ -90,7 +90,7 @@ def main():
         logging.info("Processing complete.")
     else:
         logging.error(
-            "Processing aborted: no valid data (invalid file or read error)."
+            "Processing aborted: Invalid data (invalid file / read error)."
         )
 
 

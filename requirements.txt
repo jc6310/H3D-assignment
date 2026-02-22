@@ -1,1 +1,1 @@
-# H3D-assignment
+# H3D-assignment — stdlib only; Python 3.8+

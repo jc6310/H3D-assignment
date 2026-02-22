@@ -6,7 +6,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from config import load_config
-from extractor import extract_json_files
+from extractor import extract_json_file
 from loader import send_records_to_db, add_records_to_folder
 
 shutdown_flag = False
@@ -24,7 +24,7 @@ def process_file(file_path, config):
     logging.info(f"[{thread_name}] Processing: {os.path.basename(file_path)}")
     if shutdown_flag:
         return False, None
-    json_data = extract_json_files(file_path)
+    json_data = extract_json_file(file_path)
     if shutdown_flag or json_data is None:
         return False, None
     mode = config["mode"]
@@ -49,17 +49,14 @@ def process_folder(config):
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_file, f, config) for f in files]
         for future in as_completed(futures):
-            if shutdown_flag:
-                break
             ok, data = future.result()
             if ok:
                 success += 1
-                records.append(data)
+                if config["mode"] == "folder":
+                    records.append(data)
             else:
                 failure += 1
-    if config["mode"] == "folder" and records:
-        add_records_to_folder(records, config["output"])
-    return success, failure
+    return success, failure, records
 
 
 def main():
@@ -77,18 +74,24 @@ def main():
 
     input_path = config["input"]
     if os.path.isdir(input_path):
-        success, failure = process_folder(config)
-        logging.info(f"Processing complete. Success: {success}, Failed: {failure}")
+        success, failure, records = process_folder(config)
+        output_records = records if config["mode"] == "folder" else []
     else:
         ok, data = process_file(input_path, config)
-        if ok:
-            if config["mode"] == "folder" and data:
-                add_records_to_folder(data, config["output"])
-            logging.info("Processing complete.")
-        else:
-            logging.error(
-                "Processing aborted: no valid data (invalid file or read error)."
-            )
+        success, failure = (1, 0) if ok else (0, 1)
+        output_records = ([data] if data else []) if config["mode"] == "folder" else []
+
+    if output_records:
+        add_records_to_folder(output_records, config["output"])
+
+    if os.path.isdir(input_path):
+        logging.info("Processing complete. Success: %s, Failed: %s", success, failure)
+    elif success:
+        logging.info("Processing complete.")
+    else:
+        logging.error(
+            "Processing aborted: no valid data (invalid file or read error)."
+        )
 
 
 if __name__ == "__main__":

@@ -53,6 +53,12 @@ class TestValidateJson(unittest.TestCase):
         self.assertFalse(valid)
         self.assertIn("ISO-8601", error)
 
+    def test_timestamp_not_string(self):
+        data = {**VALID_RECORD, "timestamp": 12345}
+        valid, error = validate_json(data)
+        self.assertFalse(valid)
+        self.assertIn("timestamp", error)
+
     def test_payload_must_be_object(self):
         data = {**VALID_RECORD, "payload": "not an object"}
         valid, error = validate_json(data)
@@ -67,6 +73,7 @@ class TestValidateJson(unittest.TestCase):
     def test_root_none(self):
         valid, error = validate_json(None)
         self.assertFalse(valid)
+        self.assertIn("object", error)
 
 
 if __name__ == "__main__":

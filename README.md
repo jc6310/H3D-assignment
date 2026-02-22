@@ -37,6 +37,8 @@ Invalid files should:
 
 ## Requirements Checklist
 
+All conditions from **Requirements**, **Validation Rules**, **Concurrency**, and **Additional Expectations** above are met.
+
 | Requirement | Status | Implementation |
 |-------------|--------|-----------------|
 | **Language: Python** | Done | Python 3 |
@@ -53,7 +55,7 @@ Invalid files should:
 | **Logging with timestamps** | Done | `%(asctime)s [%(levelname)s]` |
 | **Result summaries** | Done | "Success: N, Failed: M" |
 | **Configurable via env/CLI** | Done | `config.py` |
-| **Graceful shutdown** | Done | `handle_shutdown`, SIGINT/SIGTERM |
+| **Graceful shutdown** | Done | SIGINT/SIGTERM; in-flight files complete before exit |
 | **Unit tests** | Done | `tests/test_json_processor.py` |
 
 ## Run

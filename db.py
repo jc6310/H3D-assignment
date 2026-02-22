@@ -20,7 +20,7 @@ def init_db(db_path):
                 timestamp TEXT,
                 payload TEXT
             )
-        """
+            """
         )
 
         conn.commit()
@@ -32,12 +32,12 @@ def init_db(db_path):
 
         return exists
     except sqlite3.Error as e:
-        logging.error(f"init_db failed: {e}")
-
+        logging.error("init_db failed: %s", e)
         return False
 
 
 def insert_record(db_path, record):
+    """Inserts record to db, returns true is success else false if fails"""
     try:
         path = os.path.abspath(db_path)
         with sqlite3.connect(path) as conn:
@@ -49,10 +49,8 @@ def insert_record(db_path, record):
 
         return True
     except (KeyError, TypeError) as e:
-        logging.error(f"Invalid record structure: {e}")
-
+        logging.error("Invalid record structure: %s", e)
         return False
     except sqlite3.Error as e:
-        logging.error(f"Insert failed: {e}")
-
+        logging.error("Insert failed: %s", e)
         return False
